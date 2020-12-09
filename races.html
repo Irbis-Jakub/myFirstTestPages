@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Гонки</title>
+</head>
+
+<body>
+	<script src="https://code.jquery.com/jquery-2.1.0.js"></script>
+	<script>
+	/* var drawCar = function(car) {
+		var carHtml = '<img src="http://nostarch.com/images/car.png">'
+		var carElement = $(carHtml)
+		carElement.css({
+			position: 'absolute',
+			left: car.x,
+			top: car.y
+		})
+		$('body').append(carElement)
+	} */
+	var carHtml = '<img src="http://nostarch.com/images/car.png">'
+	var Car = function (x, y, s) {
+		this.x = x
+		this.y = y
+		this.speed = s
+		this.carElement = $(carHtml)
+		this.draw = function() {
+			this.carElement.css({
+				position: 'absolute',
+				left: this.x,
+				top: this.y
+			})
+			$('body').append(this.carElement)
+		}
+		this.draw()
+	}
+	Car.prototype.moveRight = function () {
+		this.x += Math.floor(Math.random() * this.speed)
+		this.carElement.css({
+			left: this.x,
+			top: this.y
+		})
+	}
+	Car.prototype.moveLeft = function () {
+		this.x -= Math.floor(Math.random() * this.speed)
+		this.carElement.css({
+			left: this.x,
+			top: this.y
+		})
+	}
+	Car.prototype.moveUp = function () {
+		this.y -= Math.floor(Math.random() * this.speed)
+		this.carElement.css({
+			left: this.x,
+			top: this.y
+		})
+	}
+	Car.prototype.moveDown = function () {
+		this.y += Math.floor(Math.random() * this.speed)
+		this.carElement.css({
+			left: this.x,
+			top: this.y
+		})
+	}
+	var tesla = new Car (20, 20 ,5.6)
+	var nissan = new Car (100, 100, 5)
+	setInterval(function () {tesla.moveRight()},50)
+	setInterval(function () {nissan.moveRight()},50)
+	</script>
+</body>
+</html>

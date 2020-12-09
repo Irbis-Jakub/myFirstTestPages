@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Моя первая веб-страничка</title>
+</head>
+
+<body>
+	<h1>Привет, мир!</H1>
+	<p>Моя <em>первая</em> <strong>веб-страничка</strong></p>
+	<script>
+	function pickWord(){
+		/*
+		var words = [
+			"программа",
+			"макака",
+			"прекрасный",
+			"оладушек"
+		]
+		return words[Math.floor(Math.random()*words.length)]
+		*/
+		return prompt("Введите слово для угадывания: ")
+		}
+	function setupAnswerArray (s) {
+		var setupArray = [];
+		for (var i = 0; i < s.length; i++) {
+			setupArray[i] = "_"
+			}
+		return setupArray
+		}
+	function showPlayerProgress (someArray) {
+		alert("На данный момент угадано: " + someArray.join(" ") + " Осталось попыток " + penalty + ".")
+		}
+	function getGuess() {
+		var inputStr = prompt("Какая буква по-твоему есть в этом слове? Если тебе надоело, можешь нажать Отмена")
+		if (inputStr !== null) {
+			while (inputStr.length > 1) {
+				inputStr = prompt("Нужно ввести ровно один символ, 	попробуй еще раз :) Если тебе надоело, можешь нажать Отмена")
+				}
+			}
+		return inputStr
+		}
+	function updateGameState (g,w,a,p) {
+		var rightLetter = 0
+		for (var j = 0; j < w.length; j++) {
+			if ((g.toLowerCase() === w[j].toLowerCase()) && (a[j] === "_")) {
+				a[j] = g.toUpperCase()
+				rightLetter ++
+				} //else alert("Такой буквы нет в загаданном слове :(")
+			}
+		if (rightLetter === 0) {
+			p = p - 1
+			//alert ("такой буквы нет, осталось " + p + " попыток")
+			
+			}
+		alert ("Таких букв в слове " + rightLetter)
+		return rightLetter
+		}
+	var word = pickWord()
+	var answerArray = setupAnswerArray (word)
+	var penalty = 15
+	var remainingLetters = word.length
+	while ((remainingLetters>0) && (penalty > 0)) {
+		showPlayerProgress (answerArray)
+		var guess = getGuess()
+		if (guess === null) {
+			break
+			}
+		var correctGuesses = updateGameState (guess, word, answerArray,penalty)
+		alert ("осталось " + penalty + " попыток")
+		remainingLetters -= correctGuesses
+		
+	}
+	if (remainingLetters == 0) {
+		alert("Отлично! Ты угадал слово " + word)
+	} 	else {
+			alert("Было загадано слово " + word.toUpperCase())
+		}
+	</script>
+</body>
+</html>

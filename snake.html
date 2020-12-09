@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Змейка!</title>
+</head>
+
+<body>
+	<script src="https://code.jquery.com/jquery-2.1.0.js"></script>
+	<canvas id='canvas' width='500' height='500'></canvas>
+	<script>
+	//Настраиваем холст
+	var canvas = document.getElementById('canvas')
+	var ctx = canvas.getContext('2d')
+	var width = canvas.width
+	var height = canvas.height
+	//Задаем переменные
+	var blockSize = 10
+	var widthInBlocks = Math.floor(width / blockSize)
+	var heightInBlocks = Math.floor(height / blockSize)
+	var score = 0
+	var directions = {
+		37: 'left',
+		38: 'up',
+		39: 'right',
+		40: 'down'
+	}
+	//Задаем функции
+	//Рисуем рамку
+	var drawBorder = function() {
+		ctx.fillStyle = 'Gray'
+		ctx.fillRect(0, 0, width, blockSize)
+		ctx.fillRect(0, height - blockSize, width, blockSize)
+		ctx.fillRect(0, blockSize, blockSize, height - 2 * blockSize)
+		ctx.fillRect(width - blockSize, blockSize, blockSize, height - 2 * blockSize)
+	}
+	//Выводим текущий счет
+	var drawScore = function() {
+		ctx.fillStyle = 'Black'
+		ctx.font = '20px Courier'
+		ctx.textAlign = 'left'
+		ctx.textBaseline = 'top'
+		ctx.fillText('Привет, мир! Текущий счет: ' + score, blockSize, blockSize)
+	}
+	//Игра закончилась
+	var gameOver = function() {
+		clearInterval(intervalId)
+		ctx.font = '60px Courier'
+		ctx.fillStyle = 'Black'
+		ctx.textAlign = 'center'
+		ctx.textBaseLine = 'middle'
+		ctx.fillText('Игра' ,width / 2, height / 2 - 30)
+		ctx.textBaseLine = 'middle'
+		ctx.fillText('закончена' ,width / 2, height / 2 + 30)
+	}
+	//Обработка нажатий клавиш
+	$('body').keydown(function (event) {
+		var newDirection = directions[event.keyCode]
+		if (newDirection !== undefined) {
+			snake.setDirection(newDirection)
+		}
+	})
+	//Задаем объекты
+	var Block = function(col, row) {
+		this.col = col;
+		this.row = row
+	}
+	//Рисуем блоки
+	Block.prototype.drawSquare = function(color) {
+		var x = this.col * blockSize
+		var y = this.row * blockSize
+		ctx.fillStyle = color
+		ctx.fillRect(x, y, blockSize, blockSize)
+	}
+	//Рисуем круги в блоках
+	Block.prototype.drawCircle = function(color) {
+		var x = this.col * blockSize + blockSize / 2
+		var y = this.row * blockSize + blockSize / 2
+		ctx.fillStyle = color
+		ctx.beginPath()
+		ctx.arc(x, y, blockSize / 2, 0, Math.PI * 2, false)
+		ctx.fill()
+		}
+	//Проверяем пересечение блоков
+	Block.prototype.equal = function(otherBlock) {
+		return this.col === otherBlock.col && this.row === otherBlock.row
+	}
+	//Создаем змейку
+	var Snake = function() {
+		this.segments = [
+			new Block(7, 5),
+			new Block(6, 5),
+			new Block(5, 5)
+		]
+		this.direction = 'right'
+		this.nextDirection = 'right'
+	}
+	//Рисуем змейку
+	Snake.prototype.draw = function() {
+		for (var i = 0; i < this.segments.length; i++) {
+			this.segments[i].drawSquare('Blue')
+		}
+	}
+	//Двигаем змейку
+	Snake.prototype.move = function() {
+		var head = this.segments[0]
+		var newHead
+		this.direction = this.nextDirection
+		if (this.direction === 'right') {
+			newHead = new Block(head.col + 1, head.row)
+		} else if (this.direction === 'down') {
+			newHead = new Block(head.col, head.row + 1)
+		} else if (this.direction === 'left') {
+			newHead = new Block(head.col - 1, head.row)
+		} else if (this.direction === 'up') {
+			newHead = new Block(head.col, head.row - 1)
+		}
+		if (this.checkCollision(newHead)) {
+			gameOver()
+			return
+		}
+		this.segments.unshift(newHead)
+		if (newHead.equal(apple.position)) {
+			score++
+			apple.move()
+		} else {
+			this.segments.pop()
+		}
+	}
+	//Проверяем столкновение
+	Snake.prototype.checkCollision = function (head) {
+		var leftCollision = (head.col === 0)
+		var topCollision = (head.row === 0)
+		var rightCollision = (head.col === widthInBlocks - 1)
+		var bottomCollision = (head.row === heightInBlocks - 1)
+		var wallCollision = leftCollision || topCollision || rightCollision || bottomCollision
+		var selfCollision = false
+		for (var i = 0; i < this.segments.length; i++) {
+			if (head.equal(this.segments[i])) {
+				selfCollision = true
+			}
+		}
+		return wallCollision || selfCollision
+	}
+	Snake.prototype.setDirection = function(newDirection) {
+		if (this.direction === 'up' && newDirection === 'down') {
+			return
+		}
+		if (this.direction === 'down' && newDirection === 'up') {
+			return
+		}
+		if (this.direction === 'left' && newDirection === 'right') {
+			return
+		}
+		if (this.direction === 'right' && newDirection === 'left') {
+			return
+		}
+		this.nextDirection = newDirection
+	}
+	//Создаем яблоко
+	var Apple = function () {
+		this.position = new Block(10, 10)
+	}
+	//Рисуем яблоко
+	Apple.prototype.draw = function () {
+		this.position.drawCircle('LimeGreen')
+	}
+	Apple.prototype.move = function () {
+		var randomCol = Math.floor(Math.random() * (widthInBlocks - 2)) + 1
+		var randomRow = Math.floor(Math.random() * (heightInBlocks - 2)) + 1
+		this.position = new Block(randomCol, randomRow)
+	}/*
+	//Тестируем разные части кода
+	var apple = new Apple()
+	apple.move()
+	apple.draw()*/
+	//Обновление и перерисовка поля
+	var snake = new Snake ()
+	var apple = new Apple ()
+	var intervalId = setInterval(function() {
+		ctx.clearRect(0, 0, width, height)
+		drawScore()
+		snake.move()
+		snake.draw()
+		apple.draw()
+		drawBorder()
+	}, 100)
+	</script>
+</body>
+</html>
