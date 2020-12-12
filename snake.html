@@ -7,7 +7,32 @@
 
 <body>
 	<script src="https://code.jquery.com/jquery-2.1.0.js"></script>
-	<canvas id='canvas' width='500' height='500'></canvas>
+	<table cols='2'>
+	<tr>
+	<td>
+	<canvas id='canvas' width='450' height='450'></canvas>
+	</td>
+	<td>
+	<table cols='3' width=450>
+		<tr>
+		<td></td>
+		<td><img id='buttonUp' width=150 src='https://github.com/Irbis-Jakub/myFirstTestPages/raw/main/img/arrowUp.png'></td>
+		<td></td>
+		</tr>
+		<tr>
+		<td><img id='buttonLeft' width=150 src='https://github.com/Irbis-Jakub/myFirstTestPages/raw/main/img/arrowLeft.png'></td>
+		<td></td>
+		<td><img id='buttonRight' width=150 src='https://github.com/Irbis-Jakub/myFirstTestPages/raw/main/img/arrowRight.png'></td>
+		</tr>
+		<tr>
+		<td></td>
+		<td><img id='buttonDown' width=150 src='https://github.com/Irbis-Jakub/myFirstTestPages/raw/main/img/arrowDown.png'></td>
+		<td></td>
+		</tr>
+	</table>
+	</td>
+	</tr>
+	</table>
 	<script>
 	//Настраиваем холст
 	var canvas = document.getElementById('canvas')
@@ -59,6 +84,34 @@
 		if (newDirection !== undefined) {
 			snake.setDirection(newDirection)
 		}
+	})
+	//Обработка стрелки вниз
+	$('#buttonDown').click(function () {
+	var newDirection = directions[40]
+	if (newDirection !== undefined) {
+		snake.setDirection(newDirection)
+	}
+	})
+	//Обработка стрелки вверх
+	$('#buttonUp').click(function () {
+	var newDirection = directions[38]
+	if (newDirection !== undefined) {
+		snake.setDirection(newDirection)
+	}
+	})
+	//Обработка стрелки влево
+	$('#buttonLeft').click(function () {
+	var newDirection = directions[37]
+	if (newDirection !== undefined) {
+		snake.setDirection(newDirection)
+	}
+	})
+	//Обработка стрелки вправо
+	$('#buttonRight').click(function () {
+	var newDirection = directions[39]
+	if (newDirection !== undefined) {
+		snake.setDirection(newDirection)
+	}
 	})
 	//Задаем объекты
 	var Block = function(col, row) {
